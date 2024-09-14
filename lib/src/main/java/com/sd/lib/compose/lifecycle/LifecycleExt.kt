@@ -11,29 +11,30 @@ import kotlin.coroutines.resume
  * 如果当前状态小于[state]，则挂起
  */
 suspend fun LifecycleOwner.fAtLeastState(
-    state: Lifecycle.State = Lifecycle.State.STARTED,
-) {
-    lifecycle.fAtLeastState(state = state)
+   state: Lifecycle.State = Lifecycle.State.STARTED,
+): Boolean {
+   return lifecycle.fAtLeastState(state = state)
 }
 
 /**
  * 如果当前状态小于[state]，则挂起
  */
 suspend fun Lifecycle.fAtLeastState(
-    state: Lifecycle.State = Lifecycle.State.STARTED,
-) {
-    if (currentState == Lifecycle.State.DESTROYED) throw CancellationException()
-    if (currentState.isAtLeast(state)) return
-    suspendCancellableCoroutine { continuation ->
-        val observer = object : LifecycleEventObserver {
-            override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
-                if (event.targetState >= state) {
-                    removeObserver(this)
-                    continuation.resume(Unit)
-                }
+   state: Lifecycle.State = Lifecycle.State.STARTED,
+): Boolean {
+   if (currentState == Lifecycle.State.DESTROYED) throw CancellationException()
+   if (currentState.isAtLeast(state)) return true
+   suspendCancellableCoroutine { continuation ->
+      val observer = object : LifecycleEventObserver {
+         override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+            if (event.targetState >= state) {
+               removeObserver(this)
+               continuation.resume(Unit)
             }
-        }
-        addObserver(observer)
-        continuation.invokeOnCancellation { removeObserver(observer) }
-    }
+         }
+      }
+      addObserver(observer)
+      continuation.invokeOnCancellation { removeObserver(observer) }
+   }
+   return false
 }

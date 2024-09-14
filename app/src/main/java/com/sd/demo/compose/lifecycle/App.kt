@@ -9,18 +9,18 @@ import com.sd.lib.compose.lifecycle.fAppLifecycleScope
 import kotlinx.coroutines.launch
 
 class App : Application() {
-    override fun onCreate() {
-        super.onCreate()
-        fAppLifecycleScope.launch {
-            fAppLifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                logMsg { "AppLifecycle repeatOnLifecycle" }
-            }
-        }
+   override fun onCreate() {
+      super.onCreate()
+      fAppLifecycleScope.launch {
+         fAppLifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            logMsg { "AppLifecycle repeatOnLifecycle" }
+         }
+      }
 
-        fAppLifecycleScope.launch {
-            fAppLifecycle.eventFlow.collect { event ->
-                logMsg { "AppLifecycle event:$event" }
-            }
-        }
-    }
+      fAppLifecycleScope.launch {
+         fAppLifecycle.eventFlow.collect { event ->
+            logMsg { "AppLifecycle event:$event" }
+         }
+      }
+   }
 }
