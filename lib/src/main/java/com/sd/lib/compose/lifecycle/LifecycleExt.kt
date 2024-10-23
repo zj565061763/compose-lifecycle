@@ -18,6 +18,8 @@ suspend fun LifecycleOwner.fAtLeastState(
 
 /**
  * 如果当前状态小于[state]，则挂起
+ *
+ * @return true-调用此方法时已经满足[state]；false-调用此方法时还未满足[state]挂起等待之后满足
  */
 suspend fun Lifecycle.fAtLeastState(
    state: Lifecycle.State = Lifecycle.State.STARTED,
